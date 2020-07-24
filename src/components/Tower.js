@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { Bullet } from './Bullet';
 
 export class Tower extends Phaser.GameObjects.Sprite {
 	constructor(config) {
@@ -30,6 +31,7 @@ export class Tower extends Phaser.GameObjects.Sprite {
 		this.debug_ray.setDepth(5);
 		this.debug_ray.name = 'debug_ray';
 		this.debug_ray.rotation = -Math.PI;
+		this.bullets = [];
 
 		window.tower = this;
 	}
@@ -67,8 +69,23 @@ export class Tower extends Phaser.GameObjects.Sprite {
 		} else if (current < target) {
 			step = Math.min(this.speed * delta, Math.abs(current - target));
 		}
+		if (Math.abs(this.head.rotation - target) < 0.0005) {
+			if (this.bullets.length < 5) {
+				let vec = new Phaser.Math.Vector2();
+				vec.setToPolar(this.head.rotation, 100);
+				let bullet = new Bullet({
+					x: vec.x + this.head.x,
+					y: vec.y + this.head.y,
+					targetX: this.enemy.x,
+					targetY: this.enemy.y,
+					scene: this.scene,
+				});
 
+				this.bullets.push(bullet);
+			}
+		}
 		this.head.rotation += step;
 		this.debug_ray.rotation += step;
+		this.bullets = this.bullets.filter((value, index) => value.active);
 	}
 }

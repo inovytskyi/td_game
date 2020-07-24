@@ -15,6 +15,11 @@ export default class LoaderScene extends Phaser.Scene {
 		this.load.image('tower_head', tower_head);
 	}
 	create() {
+		this.graphics = this.add.graphics();
+		this.graphics.lineStyle(2, 0xffff00, 1);
+		this.graphics.strokeCircle(5, 5, 5);
+		this.graphics.generateTexture('bullet', 10, 10);
+		this.graphics.destroy();
 		this.scene.start('Game');
 	}
 }
