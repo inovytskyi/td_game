@@ -1,25 +1,31 @@
 import Phaser from 'phaser';
-import background from '../assets/images/background.png';
-import enemy from '../assets/images/red_sq.png';
-import tower_head from '../assets/images/tower_head.png';
-import tower_base from '../assets/images/tower_base.png';
+import {
+    createBackgroundTexture,
+    createBulletTexture,
+    createEnemyTexture,
+    createTowerBaseTexture, createTowerHeadTexture
+} from "../components/helper";
 
 export default class LoaderScene extends Phaser.Scene {
-	constructor() {
-		super('Loader');
-	}
-	preload() {
-		this.load.image('background', background);
-		this.load.image('enemy', enemy);
-		this.load.image('tower_base', tower_base);
-		this.load.image('tower_head', tower_head);
-	}
-	create() {
-		this.graphics = this.add.graphics();
-		this.graphics.lineStyle(2, 0xffff00, 1);
-		this.graphics.strokeCircle(5, 5, 5);
-		this.graphics.generateTexture('bullet', 10, 10);
-		this.graphics.destroy();
-		this.scene.start('Game');
-	}
+    constructor() {
+        super('Loader');
+    }
+
+    preload() {
+    }
+
+    create() {
+        const config = {
+            step_x: 50,
+            step_y: 50,
+            nrow: 25,
+            ncol: 25,
+        }
+        createEnemyTexture(this);
+        createBackgroundTexture(this, config);
+        createBulletTexture(this);
+        createTowerBaseTexture(this);
+        createTowerHeadTexture(this);
+        this.scene.start('Game');
+    }
 }

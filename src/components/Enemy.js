@@ -2,34 +2,40 @@ import Phaser from 'phaser';
 
 export default class Enemy extends Phaser.GameObjects.Sprite {
 	constructor(config) {
-		super(config.scene, config.x, config.y);
+		super(config.scene, config.path.startPoint.x, config.path.startPoint.y);
 		this.setTexture('enemy');
 		this.name = 'enemy1';
-		config.scene = config.scene;
-		this.scene.add.existing(this);
-		this.graphics = this.scene.add.graphics();
-		this.graphics.setDepth(5);
-		this.setDepth(5);
-		this.path = config.path;
-		this.drawPath = false;
+		this.path = config. path
+		this.drawPath = config.drawPath;
+		if (this.drawPath){
+			this.debug_graph = this.scene.add.graphics();
+			this.debug_graph.setDepth(5);
+		}
+
+		this.setDepth(7);
+
 		this.setPosition(this.path.startPoint.x, this.path.startPoint.y);
-		//this.setPosition(pos.x, pos.y);
+		this.progress = 0;
+		this.point = new Phaser.Math.Vector2()
+		this.speed = 0.0001;
 		window.enemy = this;
-		this.position = { t: 0, vec: new Phaser.Math.Vector2() };
-		this.scene.add.tween({
-			targets: this.position,
-			...config.tween,
-		});
+		this.scene.add.existing(this);
+
 	}
 
 	preUpdate(time, delta) {
 		super.preUpdate(time, delta);
-		this.path.getPoint(this.position.t, this.position.vec);
-		this.setPosition(this.position.vec.x, this.position.vec.y);
-		if (this.drawPath) {
-			this.graphics.clear();
-			this.graphics.lineStyle(2, 0xff0000, 0.7);
-			this.path.draw(this.graphics);
+		if(this.progress < 1) {
+			this.progress += this.speed * delta;
+			this.path.getPoint(this.progress, this.point);
+			this.setPosition(this.point.x, this.point.y);
+			if (this.drawPath) {
+				this.debug_graph.clear();
+				this.debug_graph.lineStyle(2, 0xff0000, 0.7);
+				this.path.draw(this.debug_graph);
+			}
+		} else {
+			this.progress = 0;
 		}
 	}
 }

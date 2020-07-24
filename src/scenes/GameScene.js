@@ -1,9 +1,9 @@
 import Phaser from 'phaser';
-import GridLines from '../components/GridLines';
 import CameraController from '../components/CameraController';
 import Enemy from '../components/Enemy';
 import { createPath, createTweenConfig } from '../components/helper';
 import { Tower } from '../components/Tower';
+import {Background} from "../components/Background";
 
 export default class GameScene extends Phaser.Scene {
 	constructor() {
@@ -12,21 +12,16 @@ export default class GameScene extends Phaser.Scene {
 	preload() {}
 
 	create() {
-		this.background = this.add.image(0, 0, 'background');
-		this.background.setOrigin(0, 0);
-		this.background.setAlpha(0.6);
-		this.background.setInteractive();
+		this.background = new Background({scene: this, x: 0, y: 0})
 
-		// this.redSquare = this.add.image(0, 0, 'enemy');
-		// this.redSquare.setOrigin(0, 0);
-		// this.redSquare.setDepth(5);
 
 		this.enemy = new Enemy({
 			scene: this,
 			x: 100,
 			y: 100,
+			drawPath: false,
 			path: createPath(),
-			tween: createTweenConfig(),
+			// tween: createTweenConfig(),
 		});
 
 		this.tower = new Tower({
@@ -34,17 +29,7 @@ export default class GameScene extends Phaser.Scene {
 			x: 500,
 			y: 250,
 		});
-		window.background = this.background;
-		this.grid_line = new GridLines({
-			scene: this,
-			x: 0,
-			y: 0,
 
-			step_x: 50,
-			step_y: 50,
-			nrow: 25,
-			ncol: 25,
-		});
 		this.camera_controller = new CameraController({
 			min_x: 0,
 			min_y: 0,
@@ -64,8 +49,9 @@ export default class GameScene extends Phaser.Scene {
 			this.mouseMoveHandler(pointer, gameObject, event)
 		);
 	}
-	update() {
+	update(time, delta) {
 		this.camera_controller.updateCamera();
+
 	}
 
 	mouseUpHandler(pointer, gameObject, event) {
